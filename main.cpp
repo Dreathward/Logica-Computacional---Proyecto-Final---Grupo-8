@@ -7,7 +7,7 @@ main ()
   //Declaracion de variables
   int op, contmen, tipllam, cantllam, duracion, cantllamloc, cantminloc,
 	cantdinloc, cantllamlargdis, cantminlargdis, cantdinlargdis, cantllamcel,
-	cantmincel, cantdincel;
+	cantmincel, cantdincel, cantdinlin, cantminlin, cantllamlin;
 
   cout << "-----PROYECTO FINAL/GRUPO 8-----\n";
 
@@ -77,12 +77,10 @@ main ()
 			  cantllamloc += cantllam;
 
 			  //Se ingresan los detalles de cada llamada local
+			  cout << "\nCuantos minutos duro?\n\n";
 			  for (int i = 1; i <= cantllam; i++)
 				{
-				  cout << "\n- Llamada " << i << ": \n\n";
-				  cout << "Cuantos minutos duro?\n\n";
-
-				  cout << ">>> ";
+				  cout << i << " >>> ";
 				  cin >> duracion;
 
 				  //Se acumula el tiempo total de las llamadas locales
@@ -99,12 +97,10 @@ main ()
 			  cantllamlargdis += cantllam;
 
 			  //Se ingresan los detalles de cada llamada de larga distancia
+			  cout << "\nCuantos minutos duro?\n\n";
 			  for (int i = 1; i <= cantllam; i++)
 				{
-				  cout << "\n- Llamada " << i << ": \n\n";
-				  cout << "Cuantos minutos duro?\n\n";
-
-				  cout << ">>> ";
+				  cout << i << " >>> ";
 				  cin >> duracion;
 
 				  //Se acumula el tiempo total de las llamadas de larga distancia
@@ -121,12 +117,10 @@ main ()
 			  cantllamcel += cantllam;
 
 			  //Se ingresan los detalles de cada llamada a celular
+			  cout << "\nCuantos minutos duro?\n\n";
 			  for (int i = 1; i <= cantllam; i++)
 				{
-				  cout << "\n- Llamada " << i << ": \n\n";
-				  cout << "Cuantos minutos duro?\n\n";
-
-				  cout << ">>> ";
+				  cout << i << " >>> ";
 				  cin >> duracion;
 
 				  //Se acumula el tiempo total de las llamadas a celular
@@ -223,7 +217,56 @@ main ()
 		  break;
 
 		case 3:
-		  cout << "\nHa seleccionado la opcion 3.\n";
+		  //Se calcula y almacena la sumatoria de los datos de todas las lineas
+		  cantllamlin = cantllamloc + cantllamlargdis + cantllamcel;
+		  cantminlin = cantminloc + cantminlargdis + cantmincel;
+		  cantdinlin = cantdinloc + cantdinlargdis + cantdincel;
+
+		  //Se condiciona la existencia de registro general de datos
+		  if (cantllamlin == 0)
+			{
+			  cout << "\nNo hay informacion registrada en ninguna linea\n";
+			}
+		  else
+			{
+			  //Imprime la informacion general de todas las lineas
+			  cout << "\nINFORMACION GENERAL: \n";
+			  cout << "\nNumero total de llamadas realizadas: " <<
+				cantllamlin;
+			  cout << "\nDuracion total de llamadas: " << cantminlin <<
+				" minutos";
+			  cout << "\nCosto total de llamadas: $" << cantdinlin;
+			  cout << "\nCosto promedio por minuto de las llamadas: $" <<
+				cantdinlin / cantminlin << " x minuto";
+
+			  //Imprime un promedio de llamadas por linea en caso de haber registros en todas
+			  if (cantllamloc > 0 and cantllamlargdis > 0 and cantllamcel > 0)
+				{
+				  cout << "\nPromedio de llamadas por linea: " << cantllamlin
+					/ 3;
+				}
+
+			  //Imprime notas de aclaracion con respecto a cual/es linea/s no registraron llamadas
+			  if (cantllamloc == 0 or cantllamlargdis == 0 or cantllamcel ==
+				  0)
+				{
+				  cout << "\n\nNOTAS:\n";
+				  if (cantllamloc == 0)
+					{
+					  cout << "\n - La linea local no registro llamadas";
+					}
+				  if (cantllamlargdis == 0)
+					{
+					  cout <<
+						"\n - La linea de larga distancia no registro llamadas";
+					}
+				  if (cantllamcel == 0)
+					{
+					  cout << "\n - La linea de celular no registro llamadas";
+					}
+				}
+			  cout << "\n";
+			}
 		  break;
 
 		case 4:
@@ -234,7 +277,7 @@ main ()
 	  //Pregunta si desea regresar al menu principal
 	  if (op != 5)
 		{
-		  cout << "\nDesea regresar al menu principal (1: Si/0: No)?\n\n";
+		  cout << "\nDesea regresar al menu principal? (1: Si/0: No)\n\n";
 		  cout << ">>> ";
 		  cin >> contmen;
 
