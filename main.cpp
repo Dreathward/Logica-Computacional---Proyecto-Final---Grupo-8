@@ -8,7 +8,18 @@ main ()
   int op, contmen, tipllam, cantllam, duracion, cantllamloc, cantminloc,
 	cantdinloc, cantllamlargdis, cantminlargdis, cantdinlargdis, cantllamcel,
 	cantmincel, cantdincel, cantdinlin, cantminlin, cantllamlin, relin,
-	tarloc = 35, tarlargdis = 380, tarcel = 999, modlin, horas, minutos;
+	tarloc = 35, tarlargdis = 380, tarcel =
+	999, modlin, horas, minutos, regllamloc[30], regllamlargdis[30],
+	regllamcel[30], regllamlin[30][3];
+
+  //Inicializa en ceros la matriz de registro de las llamadas de todas las lineas
+  for (int i = 0; i < 30; i++)
+	{
+	  for (int j = 0; j < 3; j++)
+		{
+		  regllamlin[i][j] = 0;
+		}
+	}
 
   cout << "-----PROYECTO FINAL/GRUPO 8-----\n";
   do
@@ -68,64 +79,73 @@ main ()
 		  switch (tipllam)
 			{
 			case 1:
-			  //Se asigna y/o acumula la cantidad de llamadas locales
-			  cantllamloc += cantllam;
-
-			  //Se ingresan los detalles de cada llamada local
+			  //Ingresa los detalles de cada llamada local
 			  cout << "\nCuantos minutos duro?\n\n";
-			  for (int i = 1; i <= cantllam; i++)
+			  for (int i = 0; i < cantllam; i++)
 				{
-				  cout << i << " >>> ";
+				  cout << i + 1 << " >>> ";
 				  cin >> duracion;
 
-				  //Se acumula el tiempo total de las llamadas locales
+				  //Registra la informacion de la llamada en el vector registro de linea local
+				  regllamloc[i + cantllamloc] = duracion;
+
+				  //Acumula el tiempo total de las llamadas locales
 				  cantminloc += duracion;
 
 				}
 
-			  //Se calcula el costo total de las llamadas locales en pesos    
+			  //Asigna y/o acumula la cantidad de llamadas locales
+			  cantllamloc += cantllam;
+
+			  //Calcula el costo total de las llamadas locales en pesos    
 			  cantdinloc = cantminloc * tarloc;
 
 			  break;
 
 			case 2:
-			  //Se asigna y/o acumula la cantidad de llamadas de larga distancia
-			  cantllamlargdis += cantllam;
-
-			  //Se ingresan los detalles de cada llamada de larga distancia
+			  //Ingresa los detalles de cada llamada de larga distancia
 			  cout << "\nCuantos minutos duro?\n\n";
-			  for (int i = 1; i <= cantllam; i++)
+			  for (int i = 0; i < cantllam; i++)
 				{
-				  cout << i << " >>> ";
+				  cout << i + 1 << " >>> ";
 				  cin >> duracion;
 
-				  //Se acumula el tiempo total de las llamadas de larga distancia
+				  //Registra la informacion de la llamada en el vector registro de linea de larga distancia
+				  regllamlargdis[i + cantllamlargdis] = duracion;
+
+				  //Acumula el tiempo total de las llamadas de larga distancia
 				  cantminlargdis += duracion;
 
 				}
 
-			  //Se calcula el costo total de las llamadas de larga distancia en pesos    
+			  //Asigna y/o acumula la cantidad de llamadas de larga distancia
+			  cantllamlargdis += cantllam;
+
+			  //Calcula el costo total de las llamadas de larga distancia en pesos    
 			  cantdinlargdis = cantminlargdis * tarlargdis;
 
 			  break;
 
 			case 3:
-			  //Se asigna y/o acumula la cantidad de llamadas a celular
-			  cantllamcel += cantllam;
-
-			  //Se ingresan los detalles de cada llamada a celular
+			  //Ingresa los detalles de cada llamada a celular
 			  cout << "\nCuantos minutos duro?\n\n";
-			  for (int i = 1; i <= cantllam; i++)
+			  for (int i = 0; i < cantllam; i++)
 				{
-				  cout << i << " >>> ";
+				  cout << i + 1 << " >>> ";
 				  cin >> duracion;
 
-				  //Se acumula el tiempo total de las llamadas a celular
+				  //Registra la informacion de la llamada en el vector registro de linea celular
+				  regllamcel[i + cantllamcel] = duracion;
+
+				  //Acumula el tiempo total de las llamadas a celular
 				  cantmincel += duracion;
 
 				}
 
-			  //Se calcula el costo total de las llamadas a celular en pesos    
+			  //Asigna y/o acumula la cantidad de llamadas a celular
+			  cantllamcel += cantllam;
+
+			  //Calcula el costo total de las llamadas a celular en pesos    
 			  cantdincel = cantmincel * tarcel;
 
 			  break;
@@ -154,7 +174,7 @@ main ()
 			{
 			  //Imprime la informacion de la linea de llamadas locales
 			case 1:
-			  //Se condiciona la existencia de registro de llamadas locales
+			  //Condiciona la existencia de registro de llamadas locales
 			  if (cantllamloc <= 0)
 				{
 				  cout <<
@@ -162,8 +182,16 @@ main ()
 				}
 			  else
 				{
-				  cout << "\nLINEA LOCAL:\n\n";
-				  cout << "Numero total de llamadas realizadas: " <<
+				  cout << "\nLINEA LOCAL:\n";
+				  //Imprime el vector que contiene el registro de llamadas de la linea local junto a su costo individual
+				  for (int i = 0; i < cantllamloc; i++)
+					{
+					  cout << "\n" << i +
+						1 << ">>> " << regllamloc[i] << " minutos ($" <<
+						regllamloc[i] * tarloc << ")";
+					}
+
+				  cout << "\n\nNumero total de llamadas realizadas: " <<
 					cantllamloc;
 				  //Imprime la cantidad de minutos de las llamadas locales. Cuando este es superior a 60, la imprime en horas y minutos.
 				  if (cantminloc > 60)
@@ -205,7 +233,7 @@ main ()
 
 			  //Imprime la informacion de la linea de llamadas de larga distancia
 			case 2:
-			  //Se condiciona la existencia de registro de llamadas de larga distancia
+			  //Condiciona la existencia de registro de llamadas de larga distancia
 			  if (cantllamlargdis <= 0)
 				{
 				  cout <<
@@ -213,8 +241,16 @@ main ()
 				}
 			  else
 				{
-				  cout << "\nLINEA DE LARGA DISTANCIA:\n\n";
-				  cout << "Numero total de llamadas realizadas: " <<
+				  cout << "\nLINEA DE LARGA DISTANCIA:\n";
+				  //Imprime el vector que contiene el registro de llamadas de la linea de larga distancia junto a su costo individual
+				  for (int i = 0; i < cantllamlargdis; i++)
+					{
+					  cout << "\n" << i +
+						1 << ">>> " << regllamlargdis[i] << " minutos ($" <<
+						regllamlargdis[i] * tarlargdis << ")";
+					}
+
+				  cout << "\n\nNumero total de llamadas realizadas: " <<
 					cantllamlargdis;
 				  //Imprime la cantidad de minutos de las llamadas de larga distancia. Cuando este es superior a 60, la imprime en horas y minutos.
 				  if (cantminlargdis > 60)
@@ -254,7 +290,7 @@ main ()
 			  break;
 			  //Imprime la informacion de la linea de llamadas de celular
 			case 3:
-			  //Se condiciona la existencia de registro de llamadas de celular
+			  //Condiciona la existencia de registro de llamadas de celular
 			  if (cantllamcel <= 0)
 				{
 				  cout <<
@@ -262,8 +298,16 @@ main ()
 				}
 			  else
 				{
-				  cout << "\nLINEA DE CELULAR:\n\n";
-				  cout << "Numero total de llamadas realizadas: " <<
+				  cout << "\nLINEA DE CELULAR:\n";
+				  //Imprime el vector que contiene el registro de llamadas de la linea celular junto a su costo individual
+				  for (int i = 0; i < cantllamcel; i++)
+					{
+					  cout << "\n" << i +
+						1 << ">>> " << regllamcel[i] << " minutos ($" <<
+						regllamcel[i] * tarloc << ")";
+					}
+
+				  cout << "\n\nNumero total de llamadas realizadas: " <<
 					cantllamcel;
 				  //Imprime la cantidad de minutos de las llamadas de celular. Cuando este es superior a 60, la imprime en horas y minutos.
 				  if (cantmincel > 60)
@@ -319,7 +363,46 @@ main ()
 			{
 			  //Imprime la informacion general de todas las lineas
 			  cout << "\nINFORMACION GENERAL: \n";
-			  cout << "\nNumero total de llamadas realizadas: " <<
+
+			  //Traslada el vector registro de la linea local a la matriz de registro general de las lineas
+			  for (int i = 0; i <= cantllamloc; i++)
+				{
+				  regllamlin[i][0] = regllamloc[i];
+				}
+
+			  //Traslada el vector registro de la linea de larga distancia a la matriz de registro general de las lineas
+			  for (int i = 0; i <= cantllamlargdis; i++)
+				{
+				  regllamlin[i][1] = regllamlargdis[i];
+				}
+
+			  //Traslada el vector registro de la linea celular a la matriz de registro general de las lineas
+			  for (int i = 0; i <= cantllamcel; i++)
+				{
+				  regllamlin[i][2] = regllamcel[i];
+				}
+
+			  //Imprime la matriz de registro general de todas las lineas
+			  cout <<
+				"\nLINEA LOCAL;LINEA DE LARGA DISTANCIA;LINEA DE CELULAR\n";
+			  for (int i = 0; i < 30; i++)
+				{
+				  cout << "\n" << i + 1 << ">>> ";
+				  for (int j = 0; j < 3; j++)
+					{
+					  if (regllamlin[i][j] != 0)
+						{
+						  cout << regllamlin[i][j] << ";";
+						}
+					  else
+						{
+						  cout << "-;";
+						}
+					}
+				  cout << " minutos";
+				}
+
+			  cout << "\n\nNumero total de llamadas realizadas: " <<
 				cantllamlin;
 			  //Imprime la cantidad de minutos de todas las llamdas. Cuando este es superior a 60, la imprime en horas y minutos.
 			  if (cantminlin > 60)
@@ -484,6 +567,14 @@ main ()
 			{
 			case 1:
 			  //Reinicia la informacion de la linea local
+			  for (int i = 0; i < 30; i++)
+				{
+				  regllamlin[i][0] = 0;
+				}
+			  for (int i = 0; i < cantllamloc; i++)
+				{
+				  regllamloc[i] = 0;
+				}
 			  cantllamloc = cantminloc = cantdinloc = 0;
 			  tarloc = 35;
 			  cout << "\nAVISO: Informacion de la linea local reiniciada\n";
@@ -491,6 +582,14 @@ main ()
 
 			case 2:
 			  //Reinicia la informacion de la linea de larga distancia
+			  for (int i = 0; i < 30; i++)
+				{
+				  regllamlin[i][1] = 0;
+				}
+			  for (int i = 0; i < cantllamlargdis; i++)
+				{
+				  regllamlargdis[i] = 0;
+				}
 			  cantllamlargdis = cantminlargdis = cantdinlargdis = 0;
 			  tarlargdis = 380;
 			  cout <<
@@ -499,6 +598,14 @@ main ()
 
 			  //Reinicia la informacion de la linea de celular
 			case 3:
+			  for (int i = 0; i < 30; i++)
+				{
+				  regllamlin[i][2] = 0;
+				}
+			  for (int i = 0; i < cantllamcel; i++)
+				{
+				  regllamcel[i] = 0;
+				}
 			  cantllamcel = cantmincel = cantdincel = 0;
 			  tarcel = 999;
 			  cout << "\nAVISO: Informacion de la linea celular reiniciada\n";
@@ -506,6 +613,13 @@ main ()
 
 			case 4:
 			  //Reinicia la informacion de todas las lineas
+			  for (int i = 0; i < 30; i++)
+				{
+				  for (int j = 0; j < 3; j++)
+					{
+					  regllamlin[i][j] = 0;
+					}
+				}
 			  cantllamloc = cantminloc = cantdinloc = cantllamlargdis =
 				cantminlargdis = cantdinlargdis = cantllamcel = cantmincel =
 				cantdincel = 0;
