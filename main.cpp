@@ -1,6 +1,18 @@
 #include <iostream>
 using namespace std;
 
+//Declaracion y creacion de la estructura de las llamadas locales en detalle
+struct local
+{
+  int indic;
+  string depart[7] = { "Cundinamarca o Bogota D.C", "Cauca, Narinio o Valle",
+	"Antioquia, Cordoba o Choco",
+	"Atlantico, Bolivar, Cesar, La Guajira, Magdalena o Sucre",
+	"Caldas, Quindio o Risaralda", "Arauca, Norte de Santander o Santander",
+	"Amazonas, Boyaca, Casanare, Caqueta, Guaviare, Guainia, Huila, Meta, Tolima, Putumayo, San Andres, Vaupes o Vichada"
+  };
+};
+
 int
 main ()
 {
@@ -10,7 +22,10 @@ main ()
 	cantmincel, cantdincel, cantdinlin, cantminlin, cantllamlin, relin,
 	tarloc = 35, tarlargdis = 380, tarcel =
 	999, modlin, horas, minutos, regllamloc[30], regllamlargdis[30],
-	regllamcel[30], regllamlin[30][3];
+	regllamcel[30], regllamlin[30][3], evaluarindic;
+
+//Declaracion de la variable tipo "struct"
+  local regdllamloc[30];
 
   //Inicializa en ceros la matriz de registro de las llamadas de todas las lineas
   for (int i = 0; i < 30; i++)
@@ -80,11 +95,34 @@ main ()
 			{
 			case 1:
 			  //Ingresa los detalles de cada llamada local
-			  cout << "\nCuantos minutos duro?\n\n";
 			  for (int i = 0; i < cantllam; i++)
 				{
-				  cout << i + 1 << " >>> ";
+				  cout << "\nLlamada " << i + 1 << ":\n\n";
+				  //Ingresa la cantidad de minutos que duro la llamada local
+				  cout << "Cuantos minutos duro? >>> ";
 				  cin >> duracion;
+				  while (duracion <= 0)
+					{
+					  {
+						cout <<
+						  "\nERROR: La cantidad que ingreso no es valida, intente de nuevo\n\n";
+						cout << ">>> ";
+						cin >> duracion;
+					  }
+					}
+
+				  //Ingresa el indicativo de localizacion de la llamada local
+				  cout << "Cual fue el indicativo? >>> ";
+				  cin >> regdllamloc[cantllamloc].indic;
+				  while (regdllamloc[cantllamloc].indic <
+						 601 or regdllamloc[cantllamloc].indic ==
+						 603 or regdllamloc[cantllamloc].indic > 608)
+					{
+					  cout <<
+						"\nERROR: El indicativo que ingreso no es valido, intente de nuevo\n\n";
+					  cout << ">>> ";
+					  cin >> regdllamloc[cantllamloc].indic;
+					}
 
 				  //Registra la informacion de la llamada en el vector registro de linea local
 				  regllamloc[i + cantllamloc] = duracion;
@@ -93,7 +131,6 @@ main ()
 				  cantminloc += duracion;
 
 				}
-
 			  //Asigna y/o acumula la cantidad de llamadas locales
 			  cantllamloc += cantllam;
 
@@ -107,8 +144,19 @@ main ()
 			  cout << "\nCuantos minutos duro?\n\n";
 			  for (int i = 0; i < cantllam; i++)
 				{
-				  cout << i + 1 << " >>> ";
+				  cout << "\nLlamada " << i + 1 << ":\n\n";
+				  //Ingresa la cantidad de minutos que duro la llamada de larga distancia
+				  cout << "Cuantos minutos duro? >>> ";
 				  cin >> duracion;
+				  while (duracion <= 0)
+					{
+					  {
+						cout <<
+						  "\nERROR: La cantidad que ingreso no es valida, intente de nuevo\n\n";
+						cout << ">>> ";
+						cin >> duracion;
+					  }
+					}
 
 				  //Registra la informacion de la llamada en el vector registro de linea de larga distancia
 				  regllamlargdis[i + cantllamlargdis] = duracion;
@@ -131,8 +179,19 @@ main ()
 			  cout << "\nCuantos minutos duro?\n\n";
 			  for (int i = 0; i < cantllam; i++)
 				{
-				  cout << i + 1 << " >>> ";
+				  cout << "\nLlamada " << i + 1 << ":\n\n";
+				  //Ingresa la cantidad de minutos que duro la llamada celular
+				  cout << "Cuantos minutos duro? >>> ";
 				  cin >> duracion;
+				  while (duracion <= 0)
+					{
+					  {
+						cout <<
+						  "\nERROR: La cantidad que ingreso no es valida, intente de nuevo\n\n";
+						cout << ">>> ";
+						cin >> duracion;
+					  }
+					}
 
 				  //Registra la informacion de la llamada en el vector registro de linea celular
 				  regllamcel[i + cantllamcel] = duracion;
@@ -187,8 +246,23 @@ main ()
 				  for (int i = 0; i < cantllamloc; i++)
 					{
 					  cout << "\n" << i +
-						1 << ">>> " << regllamloc[i] << " minutos ($" <<
+						1 << " >>> " << regllamloc[i] << " minutos ($" <<
 						regllamloc[i] * tarloc << ")";
+
+					  //Evalua el indicativo de la llamada para obtener la referencia en el vector
+					  evaluarindic = regdllamloc[i].indic % 100;
+
+					  //Imprime hacia donde fue realizada la llamada
+					  if (evaluarindic >= 1 and evaluarindic <= 2)
+						{
+						  cout << " - Destino: " <<
+							regdllamloc[i].depart[evaluarindic - 1];
+						}
+					  else if (evaluarindic >= 4 and evaluarindic <= 8)
+						{
+						  cout << " - Destino: " <<
+							regdllamloc[i].depart[evaluarindic - 2];
+						}
 					}
 
 				  cout << "\n\nNumero total de llamadas realizadas: " <<
@@ -574,6 +648,7 @@ main ()
 			  for (int i = 0; i < cantllamloc; i++)
 				{
 				  regllamloc[i] = 0;
+				  regdllamloc[i].indic = 0;
 				}
 			  cantllamloc = cantminloc = cantdinloc = 0;
 			  tarloc = 35;
@@ -619,6 +694,11 @@ main ()
 					{
 					  regllamlin[i][j] = 0;
 					}
+				}
+			  for (int i = 0; i < cantllamloc; i++)
+				{
+				  regllamloc[i] = 0;
+				  regdllamloc[i].indic = 0;
 				}
 			  cantllamloc = cantminloc = cantdinloc = cantllamlargdis =
 				cantminlargdis = cantdinlargdis = cantllamcel = cantmincel =
