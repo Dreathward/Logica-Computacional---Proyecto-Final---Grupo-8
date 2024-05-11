@@ -13,6 +13,23 @@ struct local
   };
 };
 
+//Declaracion y creacion de la estructura de las llamadas de larga distancia en detalle
+struct largadistancia
+{
+  int pref;
+  int prefpais[18] =
+	{ 1, 52, 502, 503, 504, 505, 506, 507, 51, 54, 55, 56, 57, 58, 591, 593,
+	595, 598
+  };
+  string pais[18] =
+	{ "Canada / Estados Unidos", "Mexico", "Guatemala", "El Salvador",
+	"Honduras", "Nicaragua", "Costa Rica", "Panama", "Peru", "Argentina",
+	"Brasil", "Chile",
+	"Colombia", "Venezuela",
+	"Bolivia", "Ecuador", "Paraguay", "Uruguay"
+  };
+};
+
 int
 main ()
 {
@@ -22,10 +39,12 @@ main ()
 	cantmincel, cantdincel, cantdinlin, cantminlin, cantllamlin, relin,
 	tarloc = 35, tarlargdis = 380, tarcel =
 	999, modlin, horas, minutos, regllamloc[30], regllamlargdis[30],
-	regllamcel[30], regllamlin[30][3], evaluarindic;
+	regllamcel[30], regllamlin[30][3], evaluarindic, posregdllamloc,
+	verifpreflargdis, posregdllamlargdis;
 
-//Declaracion de la variable tipo "struct"
+//Declaracion de las variables tipo "struct"
   local regdllamloc[30];
+  largadistancia regdllamlargdis[30];
 
   //Inicializa en ceros la matriz de registro de las llamadas de todas las lineas
   for (int i = 0; i < 30; i++)
@@ -113,10 +132,10 @@ main ()
 
 				  //Ingresa el indicativo de localizacion de la llamada local
 				  cout << "Cual fue el indicativo? >>> ";
-				  cin >> regdllamloc[cantllamloc].indic;
-				  while (regdllamloc[cantllamloc].indic <
-						 601 or regdllamloc[cantllamloc].indic ==
-						 603 or regdllamloc[cantllamloc].indic > 608)
+				  cin >> regdllamloc[posregdllamloc].indic;
+				  while (regdllamloc[posregdllamloc].indic <
+						 601 or regdllamloc[posregdllamloc].indic ==
+						 603 or regdllamloc[posregdllamloc].indic > 608)
 					{
 					  cout <<
 						"\nERROR: El indicativo que ingreso no es valido, intente de nuevo\n\n";
@@ -130,6 +149,8 @@ main ()
 				  //Acumula el tiempo total de las llamadas locales
 				  cantminloc += duracion;
 
+				  //Registra la ultima posicion donde el vector registro el sitio de la llamada local
+				  posregdllamloc++;
 				}
 			  //Asigna y/o acumula la cantidad de llamadas locales
 			  cantllamloc += cantllam;
@@ -158,11 +179,51 @@ main ()
 					  }
 					}
 
+				  //Ingresa el prefijo de localizacion de la llamada de larga distancia
+				  cout << "Cual fue el prefijo del pais? >>> ";
+				  cin >> regdllamlargdis[posregdllamlargdis].pref;
+				  for (int i = 0; i < 18; i++)
+					{
+					  if (regdllamlargdis[posregdllamlargdis].pref ==
+						  regdllamlargdis[posregdllamlargdis].prefpais[i])
+						{
+						  verifpreflargdis = 1;
+						  break;
+						}
+					  else
+						{
+						  verifpreflargdis = 0;
+						}
+					}
+				  while (verifpreflargdis == 0)
+					{
+					  cout <<
+						"\nERROR: El prefijo que ingreso no se encuentra registrado, intente de nuevo\n\n";
+					  cout << ">>> ";
+					  cin >> regdllamlargdis[posregdllamlargdis].pref;
+					  for (int i = 0; i < 18; i++)
+						{
+						  if (regdllamlargdis[posregdllamlargdis].pref ==
+							  regdllamlargdis[posregdllamlargdis].prefpais[i])
+							{
+							  verifpreflargdis = 1;
+							  break;
+							}
+						  else
+							{
+							  verifpreflargdis = 0;
+							}
+						}
+					}
+
 				  //Registra la informacion de la llamada en el vector registro de linea de larga distancia
 				  regllamlargdis[i + cantllamlargdis] = duracion;
 
 				  //Acumula el tiempo total de las llamadas de larga distancia
 				  cantminlargdis += duracion;
+
+				  //Registra la ultima posicion donde el vector registro el sitio de la llamada de larga distancia
+				  posregdllamlargdis++;
 
 				}
 
@@ -252,7 +313,7 @@ main ()
 					  //Evalua el indicativo de la llamada para obtener la referencia en el vector
 					  evaluarindic = regdllamloc[i].indic % 100;
 
-					  //Imprime hacia donde fue realizada la llamada
+					  //Imprime hacia donde fue realizada la llamada local
 					  if (evaluarindic >= 1 and evaluarindic <= 2)
 						{
 						  cout << " - Destino: " <<
@@ -320,10 +381,21 @@ main ()
 				  for (int i = 0; i < cantllamlargdis; i++)
 					{
 					  cout << "\n" << i +
-						1 << ">>> " << regllamlargdis[i] << " minutos ($" <<
-						regllamlargdis[i] * tarlargdis << ")";
-					}
+						1 << ">>> " << regllamlargdis[i] << " minutos ($"
+						<< regllamlargdis[i] * tarlargdis << ")";
+					  //Imprime hacia donde fue realizada la llamada de larga distancia
+					  for (int j = 0; j < 18; j++)
+						{
+						  if (regdllamlargdis[i].pref ==
+							  regdllamlargdis[i].prefpais[j])
+							{
+							  cout << " - Destino: " <<
+								regdllamlargdis[i].pais[j];
+							  break;
+							}
+						}
 
+					}
 				  cout << "\n\nNumero total de llamadas realizadas: " <<
 					cantllamlargdis;
 				  //Imprime la cantidad de minutos de las llamadas de larga distancia. Cuando este es superior a 60, la imprime en horas y minutos.
@@ -358,8 +430,8 @@ main ()
 						cantminlargdis << " minutos";
 					}
 
-				  cout << "\nCosto total de las llamadas: $" << cantdinlargdis
-					<< "\n";
+				  cout << "\nCosto total de las llamadas: $" <<
+					cantdinlargdis << "\n";
 				}
 			  break;
 			  //Imprime la informacion de la linea de llamadas de celular
@@ -415,8 +487,8 @@ main ()
 						cantmincel << " minutos";
 					}
 
-				  cout << "\nCosto total de las llamadas: $" << cantdincel <<
-					"\n";
+				  cout << "\nCosto total de las llamadas: $" << cantdincel
+					<< "\n";
 				}
 			  break;
 			}
@@ -513,13 +585,13 @@ main ()
 			  //Imprime un promedio de llamadas por linea en caso de haber registros en todas
 			  if (cantllamloc > 0 and cantllamlargdis > 0 and cantllamcel > 0)
 				{
-				  cout << "\nPromedio de llamadas por linea: " << cantllamlin
-					/ 3;
+				  cout << "\nPromedio de llamadas por linea: " <<
+					cantllamlin / 3;
 				}
 
 			  //Imprime notas de aclaracion con respecto a cual/es linea/s no registraron llamadas
-			  if (cantllamloc == 0 or cantllamlargdis == 0 or cantllamcel ==
-				  0)
+			  if (cantllamloc == 0 or cantllamlargdis ==
+				  0 or cantllamcel == 0)
 				{
 				  cout << "\n\nNOTAS:\n";
 				  if (cantllamloc == 0)
@@ -650,7 +722,7 @@ main ()
 				  regllamloc[i] = 0;
 				  regdllamloc[i].indic = 0;
 				}
-			  cantllamloc = cantminloc = cantdinloc = 0;
+			  cantllamloc = cantminloc = cantdinloc = posregdllamloc = 0;
 			  tarloc = 35;
 			  cout << "\nAVISO: Informacion de la linea local reiniciada\n";
 			  break;
@@ -665,7 +737,8 @@ main ()
 				{
 				  regllamlargdis[i] = 0;
 				}
-			  cantllamlargdis = cantminlargdis = cantdinlargdis = 0;
+			  cantllamlargdis = cantminlargdis = cantdinlargdis =
+				posregdllamlargdis = 0;
 			  tarlargdis = 380;
 			  cout <<
 				"\nAVISO: Informacion de la linea de larga distancia reiniciada\n";
@@ -701,8 +774,9 @@ main ()
 				  regdllamloc[i].indic = 0;
 				}
 			  cantllamloc = cantminloc = cantdinloc = cantllamlargdis =
-				cantminlargdis = cantdinlargdis = cantllamcel = cantmincel =
-				cantdincel = 0;
+				cantminlargdis = cantdinlargdis = cantllamcel =
+				cantmincel = cantdincel = posregdllamloc =
+				posregdllamlargdis = 0;
 			  tarloc = 35;
 			  tarlargdis = 380;
 			  tarcel = 999;
