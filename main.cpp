@@ -30,21 +30,39 @@ struct largadistancia
   };
 };
 
+//Declaracion y creacion de la estructura de las llamadas celular en detalle
+struct celular
+{
+  int prefcel;
+  int tigo[5] = { 300, 301, 302, 303, 304 };
+  int etb = 305;
+  int claro[8] = { 310, 311, 312, 313, 314, 320, 321, 322 };
+  int movistar[4] = { 315, 316, 317, 318 };
+  int avantel[2] = { 350, 351 };
+};
+
 int
 main ()
 {
-  //Declaracion e iniciacion de variables
+  //Declaracion e inicializacion de variables
   int op, contmen, tipllam, cantllam, duracion, cantllamloc, cantminloc,
 	cantdinloc, cantllamlargdis, cantminlargdis, cantdinlargdis, cantllamcel,
 	cantmincel, cantdincel, cantdinlin, cantminlin, cantllamlin, relin,
 	tarloc = 35, tarlargdis = 380, tarcel =
 	999, modlin, horas, minutos, regllamloc[30], regllamlargdis[30],
 	regllamcel[30], regllamlin[30][3], evaluarindic, posregdllamloc,
-	verifpreflargdis, posregdllamlargdis;
+	verifpreflargdis, posregdllamlargdis, posregdllamcel, verifprefcel;
+
+  //Declaracion e inicializacion de vector de prefijos de operador movil
+  int prefopercel[23] =
+	{ 300, 301, 302, 303, 304, 305, 310, 311, 312, 313, 314, 315, 316, 317,
+	318, 319, 320, 321, 322, 323, 324, 350, 351
+  };
 
 //Declaracion de las variables tipo "struct"
   local regdllamloc[30];
   largadistancia regdllamlargdis[30];
+  celular regdllamcel[30];
 
   //Inicializa en ceros la matriz de registro de las llamadas de todas las lineas
   for (int i = 0; i < 30; i++)
@@ -254,11 +272,51 @@ main ()
 					  }
 					}
 
+				  //Ingresa el prefijo del operador de la llamada celular
+				  cout << "Cual fue el prefijo del operador? >>> ";
+				  cin >> regdllamcel[posregdllamcel].prefcel;
+				  for (int i = 0; i < 23; i++)
+					{
+					  if (regdllamcel[posregdllamcel].prefcel !=
+						  prefopercel[i])
+						{
+						  verifprefcel = 0;
+						}
+					  else
+						{
+						  verifprefcel = 1;
+						  break;
+						}
+					}
+				  while (verifprefcel == 0)
+					{
+					  cout <<
+						"\nERROR: El prefijo de operador que ingreso no se encuentra registrado, intente de nuevo\n\n";
+					  cout << ">>> ";
+					  cin >> regdllamcel[posregdllamcel].prefcel;
+					  for (int i = 0; i < 23; i++)
+						{
+						  if (regdllamcel[posregdllamcel].prefcel !=
+							  prefopercel[i])
+							{
+							  verifprefcel = 0;
+							}
+						  else
+							{
+							  verifprefcel = 1;
+							  break;
+							}
+						}
+					}
+
 				  //Registra la informacion de la llamada en el vector registro de linea celular
 				  regllamcel[i + cantllamcel] = duracion;
 
 				  //Acumula el tiempo total de las llamadas a celular
 				  cantmincel += duracion;
+
+				  //Registra la ultima posicion donde el vector registro el sitio de la llamada celular
+				  posregdllamcel++;
 
 				}
 
@@ -450,7 +508,60 @@ main ()
 					{
 					  cout << "\n" << i +
 						1 << ">>> " << regllamcel[i] << " minutos ($" <<
-						regllamcel[i] * tarloc << ")";
+						regllamcel[i] * tarcel << ")";
+
+					  if (regdllamcel[i].prefcel == 302)
+						{
+						  cout << " - Operador: Tigo / WOM";
+						}
+					  else if (regdllamcel[i].prefcel == 319)
+						{
+						  cout << " - Operador: Movistar / VirginMobile";
+						}
+					  else if (regdllamcel[i].prefcel ==
+							   323 or regdllamcel[i].prefcel == 324)
+						{
+						  cout << " - Operador: Claro / Tigo / WOM";
+						}
+					  else
+						{
+						  for (int j = 0; j < 5; j++)
+							{
+							  if (regdllamcel[i].prefcel ==
+								  regdllamcel[i].tigo[j])
+								{
+								  cout << " - Operador: Tigo";
+								}
+							}
+						  if (regdllamcel[i].prefcel == regdllamcel[i].etb)
+							{
+							  cout << " - Operador: ETB";
+							}
+						  for (int j = 0; j < 8; j++)
+							{
+							  if (regdllamcel[i].prefcel ==
+								  regdllamcel[i].claro[j])
+								{
+								  cout << " - Operador: Claro";
+								}
+							}
+						  for (int j = 0; j < 4; j++)
+							{
+							  if (regdllamcel[i].prefcel ==
+								  regdllamcel[i].movistar[j])
+								{
+								  cout << " - Operador: Movistar";
+								}
+							}
+						  for (int j = 0; j < 2; j++)
+							{
+							  if (regdllamcel[i].prefcel ==
+								  regdllamcel[i].avantel[j])
+								{
+								  cout << " - Operador: Avantel";
+								}
+							}
+						}
 					}
 
 				  cout << "\n\nNumero total de llamadas realizadas: " <<
@@ -736,6 +847,7 @@ main ()
 			  for (int i = 0; i < cantllamlargdis; i++)
 				{
 				  regllamlargdis[i] = 0;
+				  regdllamlargdis[i].pref = 0;
 				}
 			  cantllamlargdis = cantminlargdis = cantdinlargdis =
 				posregdllamlargdis = 0;
@@ -753,8 +865,9 @@ main ()
 			  for (int i = 0; i < cantllamcel; i++)
 				{
 				  regllamcel[i] = 0;
+				  regdllamcel[i].prefcel = 0;
 				}
-			  cantllamcel = cantmincel = cantdincel = 0;
+			  cantllamcel = cantmincel = cantdincel = posregdllamcel = 0;
 			  tarcel = 999;
 			  cout << "\nAVISO: Informacion de la linea celular reiniciada\n";
 			  break;
@@ -773,10 +886,20 @@ main ()
 				  regllamloc[i] = 0;
 				  regdllamloc[i].indic = 0;
 				}
+			  for (int i = 0; i < cantllamlargdis; i++)
+				{
+				  regllamlargdis[i] = 0;
+				  regdllamlargdis[i].pref = 0;
+				}
+			  for (int i = 0; i < cantllamcel; i++)
+				{
+				  regllamcel[i] = 0;
+				  regdllamcel[i].prefcel = 0;
+				}
 			  cantllamloc = cantminloc = cantdinloc = cantllamlargdis =
 				cantminlargdis = cantdinlargdis = cantllamcel =
 				cantmincel = cantdincel = posregdllamloc =
-				posregdllamlargdis = 0;
+				posregdllamlargdis = posregdllamcel = 0;
 			  tarloc = 35;
 			  tarlargdis = 380;
 			  tarcel = 999;
