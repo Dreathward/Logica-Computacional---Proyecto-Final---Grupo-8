@@ -51,7 +51,9 @@ main ()
 	tarloc = 35, tarlargdis = 380, tarcel =
 	999, modlin, horas, minutos, regllamloc[30], regllamlargdis[30],
 	regllamcel[30], regllamlin[30][3], evaluarindic, posregdllamloc,
-	verifpreflargdis, posregdllamlargdis, posregdllamcel, verifprefcel;
+	verifpreflargdis, posregdllamlargdis, posregdllamcel, verifprefcel,
+	saldloc = 100000, saldlargdis = 100000, saldcel =
+	100000, montrecarga, verifsaldloc, verifsaldlargdis, verifsaldcel;
 
   //Declaracion e inicializacion de vector de prefijos de operador movil
   int prefopercel[23] =
@@ -84,10 +86,11 @@ main ()
 	  cout << "3. Visualizar informacion de todas las lineas telefonicas\n";
 	  cout << "4. Modificar las tarifas de las lineas telefonicas\n";
 	  cout << "5. Reiniciar informacion de las lineas telefonicas\n";
-	  cout << "6. Salir\n\n";
+	  cout << "6. Agregar recarga a las lineas telefonicas\n";
+	  cout << "7. Salir\n\n";
 	  cout << ">>> ";
 	  cin >> op;
-	  while (op < 1 or op > 6)
+	  while (op < 1 or op > 7)
 		{
 		  cout <<
 			"\nERROR: La opcion que ingreso no es valida, intente de nuevo\n\n";
@@ -134,41 +137,69 @@ main ()
 			  //Ingresa los detalles de cada llamada local
 			  for (int i = 0; i < cantllam; i++)
 				{
-				  cout << "\nLlamada " << i + 1 << ":\n\n";
-				  //Ingresa la cantidad de minutos que duro la llamada local
-				  cout << "Cuantos minutos duro? >>> ";
-				  cin >> duracion;
-				  while (duracion <= 0)
-					{
-					  {
-						cout <<
-						  "\nERROR: La cantidad que ingreso no es valida, intente de nuevo\n\n";
-						cout << ">>> ";
-						cin >> duracion;
-					  }
-					}
+				  //Imprime el saldo restante de la linea local
+				  cout << "\nSALDO RESTANTE - LINEA LOCAL: $" << saldloc <<
+					"\n";
 
-				  //Ingresa el indicativo de localizacion de la llamada local
-				  cout << "Cual fue el indicativo? >>> ";
-				  cin >> regdllamloc[posregdllamloc].indic;
-				  while (regdllamloc[posregdllamloc].indic <
-						 601 or regdllamloc[posregdllamloc].indic ==
-						 603 or regdllamloc[posregdllamloc].indic > 608)
+				  //Verifica si la linea local tiene saldo
+				  if (saldloc > 0)
+					{
+					  cout << "\nLlamada " << i + 1 << ":\n\n";
+					  //Ingresa la cantidad de minutos que duro la llamada local
+					  cout << "Cuantos minutos duro? >>> ";
+					  cin >> duracion;
+					  while (duracion <= 0)
+						{
+						  {
+							cout <<
+							  "\nERROR: La cantidad que ingreso no es valida, intente de nuevo\n";
+							cout << ">>> ";
+							cin >> duracion;
+						  }
+						}
+
+					  //Verifica si la duracion de la llamada supera el saldo actual de la linea local
+					  verifsaldloc = duracion * tarloc;
+					  while (verifsaldloc > saldloc)
+						{
+						  cout <<
+							"\nAVISO: La duracion de la llamada supera el saldo actual de la linea local, ingrese una de menor cantidad\n";
+						  cout << ">>> ";
+						  cin >> duracion;
+						  verifsaldloc = duracion * tarloc;
+						}
+
+					  //Ingresa el indicativo de localizacion de la llamada local
+					  cout << "Cual fue el indicativo? >>> ";
+					  cin >> regdllamloc[posregdllamloc].indic;
+					  while (regdllamloc[posregdllamloc].indic <
+							 601 or regdllamloc[posregdllamloc].indic ==
+							 603 or regdllamloc[posregdllamloc].indic > 608)
+						{
+						  cout <<
+							"\nERROR: El indicativo que ingreso no es valido, intente de nuevo\n\n";
+						  cout << ">>> ";
+						  cin >> regdllamloc[cantllamloc].indic;
+						}
+
+					  //Registra la informacion de la llamada en el vector registro de linea local
+					  regllamloc[i + cantllamloc] = duracion;
+
+					  //Acumula el tiempo total de las llamadas locales
+					  cantminloc += duracion;
+
+					  //Registra la ultima posicion donde el vector registro el sitio de la llamada local
+					  posregdllamloc++;
+
+					  //Resta el valor de la llamada al saldo de la linea local
+					  saldloc = saldloc - (duracion * tarloc);
+					}
+				  else
 					{
 					  cout <<
-						"\nERROR: El indicativo que ingreso no es valido, intente de nuevo\n\n";
-					  cout << ">>> ";
-					  cin >> regdllamloc[cantllamloc].indic;
+						"\nAVISO: El saldo de la linea local se ha agotado, para agregar mas llamadas por favor recargar la linea\n";
+					  break;
 					}
-
-				  //Registra la informacion de la llamada en el vector registro de linea local
-				  regllamloc[i + cantllamloc] = duracion;
-
-				  //Acumula el tiempo total de las llamadas locales
-				  cantminloc += duracion;
-
-				  //Registra la ultima posicion donde el vector registro el sitio de la llamada local
-				  posregdllamloc++;
 				}
 			  //Asigna y/o acumula la cantidad de llamadas locales
 			  cantllamloc += cantllam;
@@ -183,41 +214,40 @@ main ()
 			  cout << "\nCuantos minutos duro?\n\n";
 			  for (int i = 0; i < cantllam; i++)
 				{
-				  cout << "\nLlamada " << i + 1 << ":\n\n";
-				  //Ingresa la cantidad de minutos que duro la llamada de larga distancia
-				  cout << "Cuantos minutos duro? >>> ";
-				  cin >> duracion;
-				  while (duracion <= 0)
-					{
-					  {
-						cout <<
-						  "\nERROR: La cantidad que ingreso no es valida, intente de nuevo\n\n";
-						cout << ">>> ";
-						cin >> duracion;
-					  }
-					}
+				  //Imprime el saldo restante de la linea de larga distancia
+				  cout << "\nSALDO RESTANTE - LINEA LARGA DISTANCIA: $" <<
+					saldlargdis << "\n";
 
-				  //Ingresa el prefijo de localizacion de la llamada de larga distancia
-				  cout << "Cual fue el prefijo del pais? >>> ";
-				  cin >> regdllamlargdis[posregdllamlargdis].pref;
-				  for (int i = 0; i < 18; i++)
+				  //Verifica si la linea de larga distancia tiene saldo
+				  if (saldlargdis > 0)
 					{
-					  if (regdllamlargdis[posregdllamlargdis].pref ==
-						  regdllamlargdis[posregdllamlargdis].prefpais[i])
+					  cout << "\nLlamada " << i + 1 << ":\n\n";
+					  //Ingresa la cantidad de minutos que duro la llamada de larga distancia
+					  cout << "Cuantos minutos duro? >>> ";
+					  cin >> duracion;
+					  while (duracion <= 0)
 						{
-						  verifpreflargdis = 1;
-						  break;
+						  {
+							cout <<
+							  "\nERROR: La cantidad que ingreso no es valida, intente de nuevo\n\n";
+							cout << ">>> ";
+							cin >> duracion;
+						  }
 						}
-					  else
+
+					  //Verifica si la duracion de la llamada supera el saldo actual de la linea local
+					  verifsaldlargdis = duracion * tarlargdis;
+					  while (verifsaldlargdis > saldlargdis)
 						{
-						  verifpreflargdis = 0;
+						  cout <<
+							"\nAVISO: La duracion de la llamada supera el saldo actual de la linea local, ingrese una de menor cantidad\n";
+						  cout << ">>> ";
+						  cin >> duracion;
+						  verifsaldlargdis = duracion * tarlargdis;
 						}
-					}
-				  while (verifpreflargdis == 0)
-					{
-					  cout <<
-						"\nERROR: El prefijo que ingreso no se encuentra registrado, intente de nuevo\n\n";
-					  cout << ">>> ";
+
+					  //Ingresa el prefijo de localizacion de la llamada de larga distancia
+					  cout << "Cual fue el prefijo del pais? >>> ";
 					  cin >> regdllamlargdis[posregdllamlargdis].pref;
 					  for (int i = 0; i < 18; i++)
 						{
@@ -232,17 +262,46 @@ main ()
 							  verifpreflargdis = 0;
 							}
 						}
+					  while (verifpreflargdis == 0)
+						{
+						  cout <<
+							"\nERROR: El prefijo que ingreso no se encuentra registrado, intente de nuevo\n\n";
+						  cout << ">>> ";
+						  cin >> regdllamlargdis[posregdllamlargdis].pref;
+						  for (int i = 0; i < 18; i++)
+							{
+							  if (regdllamlargdis[posregdllamlargdis].pref ==
+								  regdllamlargdis[posregdllamlargdis].prefpais
+								  [i])
+								{
+								  verifpreflargdis = 1;
+								  break;
+								}
+							  else
+								{
+								  verifpreflargdis = 0;
+								}
+							}
+						}
+
+					  //Registra la informacion de la llamada en el vector registro de linea de larga distancia
+					  regllamlargdis[i + cantllamlargdis] = duracion;
+
+					  //Acumula el tiempo total de las llamadas de larga distancia
+					  cantminlargdis += duracion;
+
+					  //Registra la ultima posicion donde el vector registro el sitio de la llamada de larga distancia
+					  posregdllamlargdis++;
+
+					  //Resta el valor de la llamada al saldo de la linea de larga distancia
+					  saldlargdis = saldlargdis - (duracion * tarlargdis);
 					}
-
-				  //Registra la informacion de la llamada en el vector registro de linea de larga distancia
-				  regllamlargdis[i + cantllamlargdis] = duracion;
-
-				  //Acumula el tiempo total de las llamadas de larga distancia
-				  cantminlargdis += duracion;
-
-				  //Registra la ultima posicion donde el vector registro el sitio de la llamada de larga distancia
-				  posregdllamlargdis++;
-
+				  else
+					{
+					  cout <<
+						"\nAVISO: El saldo de la linea de larga distancia se ha agotado, para agregar mas llamadas por favor recargar la linea\n";
+					  break;
+					}
 				}
 
 			  //Asigna y/o acumula la cantidad de llamadas de larga distancia
@@ -258,41 +317,38 @@ main ()
 			  cout << "\nCuantos minutos duro?\n\n";
 			  for (int i = 0; i < cantllam; i++)
 				{
-				  cout << "\nLlamada " << i + 1 << ":\n\n";
-				  //Ingresa la cantidad de minutos que duro la llamada celular
-				  cout << "Cuantos minutos duro? >>> ";
-				  cin >> duracion;
-				  while (duracion <= 0)
+				  //Imprime el saldo restante de la linea de larga distancia
+				  cout << "\nSALDO RESTANTE - LINEA CELULAR: $" << saldcel <<
+					"\n";
+				  if (saldcel > 0)
 					{
-					  {
-						cout <<
-						  "\nERROR: La cantidad que ingreso no es valida, intente de nuevo\n\n";
-						cout << ">>> ";
-						cin >> duracion;
-					  }
-					}
+					  cout << "\nLlamada " << i + 1 << ":\n\n";
+					  //Ingresa la cantidad de minutos que duro la llamada celular
+					  cout << "Cuantos minutos duro? >>> ";
+					  cin >> duracion;
+					  while (duracion <= 0)
+						{
+						  {
+							cout <<
+							  "\nERROR: La cantidad que ingreso no es valida, intente de nuevo\n\n";
+							cout << ">>> ";
+							cin >> duracion;
+						  }
+						}
 
-				  //Ingresa el prefijo del operador de la llamada celular
-				  cout << "Cual fue el prefijo del operador? >>> ";
-				  cin >> regdllamcel[posregdllamcel].prefcel;
-				  for (int i = 0; i < 23; i++)
-					{
-					  if (regdllamcel[posregdllamcel].prefcel !=
-						  prefopercel[i])
+					  //Verifica si la duracion de la llamada supera el saldo actual de la linea celular
+					  verifsaldcel = duracion * tarcel;
+					  while (verifsaldcel > saldcel)
 						{
-						  verifprefcel = 0;
+						  cout <<
+							"\nAVISO: La duracion de la llamada supera el saldo actual de la linea local, ingrese una de menor cantidad\n";
+						  cout << ">>> ";
+						  cin >> duracion;
+						  verifsaldcel = duracion * tarcel;
 						}
-					  else
-						{
-						  verifprefcel = 1;
-						  break;
-						}
-					}
-				  while (verifprefcel == 0)
-					{
-					  cout <<
-						"\nERROR: El prefijo de operador que ingreso no se encuentra registrado, intente de nuevo\n\n";
-					  cout << ">>> ";
+
+					  //Ingresa el prefijo del operador de la llamada celular
+					  cout << "Cual fue el prefijo del operador? >>> ";
 					  cin >> regdllamcel[posregdllamcel].prefcel;
 					  for (int i = 0; i < 23; i++)
 						{
@@ -307,17 +363,46 @@ main ()
 							  break;
 							}
 						}
+					  while (verifprefcel == 0)
+						{
+						  cout <<
+							"\nERROR: El prefijo de operador que ingreso no se encuentra registrado, intente de nuevo\n\n";
+						  cout << ">>> ";
+						  cin >> regdllamcel[posregdllamcel].prefcel;
+						  for (int i = 0; i < 23; i++)
+							{
+							  if (regdllamcel[posregdllamcel].prefcel !=
+								  prefopercel[i])
+								{
+								  verifprefcel = 0;
+								}
+							  else
+								{
+								  verifprefcel = 1;
+								  break;
+								}
+							}
+						}
+
+					  //Registra la informacion de la llamada en el vector registro de linea celular
+					  regllamcel[i + cantllamcel] = duracion;
+
+					  //Acumula el tiempo total de las llamadas a celular
+					  cantmincel += duracion;
+
+					  //Registra la ultima posicion donde el vector registro el sitio de la llamada celular
+					  posregdllamcel++;
+
+					  //Resta el valor de la llamada al saldo de la linea celular
+					  saldcel = saldcel - (duracion * tarcel);
+
 					}
-
-				  //Registra la informacion de la llamada en el vector registro de linea celular
-				  regllamcel[i + cantllamcel] = duracion;
-
-				  //Acumula el tiempo total de las llamadas a celular
-				  cantmincel += duracion;
-
-				  //Registra la ultima posicion donde el vector registro el sitio de la llamada celular
-				  posregdllamcel++;
-
+				  else
+					{
+					  cout <<
+						"\nAVISO: El saldo de la linea celular se ha agotado, para agregar mas llamadas por favor recargar la linea\n";
+					  break;
+					}
 				}
 
 			  //Asigna y/o acumula la cantidad de llamadas a celular
@@ -833,8 +918,10 @@ main ()
 				  regllamloc[i] = 0;
 				  regdllamloc[i].indic = 0;
 				}
-			  cantllamloc = cantminloc = cantdinloc = posregdllamloc = 0;
+			  cantllamloc = cantminloc = cantdinloc = posregdllamloc =
+				verifsaldloc = 0;
 			  tarloc = 35;
+			  saldloc = 100000;
 			  cout << "\nAVISO: Informacion de la linea local reiniciada\n";
 			  break;
 
@@ -850,8 +937,9 @@ main ()
 				  regdllamlargdis[i].pref = 0;
 				}
 			  cantllamlargdis = cantminlargdis = cantdinlargdis =
-				posregdllamlargdis = 0;
+				posregdllamlargdis = verifsaldlargdis = 0;
 			  tarlargdis = 380;
+			  saldlargdis = 100000;
 			  cout <<
 				"\nAVISO: Informacion de la linea de larga distancia reiniciada\n";
 			  break;
@@ -867,8 +955,10 @@ main ()
 				  regllamcel[i] = 0;
 				  regdllamcel[i].prefcel = 0;
 				}
-			  cantllamcel = cantmincel = cantdincel = posregdllamcel = 0;
+			  cantllamcel = cantmincel = cantdincel = posregdllamcel =
+				verifsaldcel = 0;
 			  tarcel = 999;
+			  saldcel = 100000;
 			  cout << "\nAVISO: Informacion de la linea celular reiniciada\n";
 			  break;
 
@@ -899,10 +989,13 @@ main ()
 			  cantllamloc = cantminloc = cantdinloc = cantllamlargdis =
 				cantminlargdis = cantdinlargdis = cantllamcel =
 				cantmincel = cantdincel = posregdllamloc =
-				posregdllamlargdis = posregdllamcel = 0;
+				posregdllamlargdis = posregdllamcel = verifsaldloc =
+				verifsaldlargdis = verifsaldcel = 0;
 			  tarloc = 35;
 			  tarlargdis = 380;
 			  tarcel = 999;
+			  saldloc = saldlargdis = saldcel = 100000;
+
 			  cout <<
 				"\nAVISO: Informacion de todas las lineas reiniciadas\n";
 			  break;
@@ -910,10 +1003,56 @@ main ()
 			}
 		  break;
 
+		case 6:
+		  //Imprime y pide alguna de los tres lineas, en caso de digitar alguna que no este, imprime error y la pide nuevamente.
+		  cout <<
+			"\nIngrese por favor la linea a la cual desea asignar recarga:\n\n";
+		  cout << "1. Local\n";
+		  cout << "2. Larga distancia\n";
+		  cout << "3. Celular\n\n";
+		  cout << ">>> ";
+		  cin >> tipllam;
+		  while (tipllam < 0 or tipllam > 3)
+			{
+			  cout <<
+				"\nERROR: La cantidad que ingreso no es valida, intente de nuevo\n\n";
+			  cout << ">>> ";
+			  cin >> tipllam;
+			}
+
+		  //Solicita el monto a recargar a la linea seleccionada anteriormente
+		  cout << "\nIngrese el monto de la recarga\n";
+		  cout << "\n>>> $";
+		  cin >> montrecarga;
+		  while (montrecarga <= 0)
+			{
+			  cout <<
+				"\nERROR: La cantidad que ingreso no es valida, intente de nuevo\n\n";
+			  cout << ">>> ";
+			  cin >> montrecarga;
+			}
+
+		  //Modifica el saldo de la linea seleccionada
+		  switch (tipllam)
+			{
+			case 1:
+			  saldloc = saldloc + montrecarga;
+			  break;
+
+			case 2:
+			  saldlargdis = saldlargdis + montrecarga;
+			  break;
+
+			case 3:
+			  saldcel = saldcel + montrecarga;
+			  break;
+			}
+		  break;
+
 		}
 
 	  //Pregunta si desea regresar al menu principal, en caso de digitar alguna que no este, imprime error y la pide nuevamente.
-	  if (op != 6)
+	  if (op != 7)
 		{
 		  cout << "\nDesea regresar al menu principal? (1: Si/0: No)\n\n";
 		  cout << ">>> ";
@@ -927,7 +1066,7 @@ main ()
 			}
 		}
 	}
-  while (op != 6 and contmen != 0);
+  while (op != 7 and contmen != 0);
 
   //Imprime creditos del proyecto
   cout <<
